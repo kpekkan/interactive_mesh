@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class Window extends JFrame {
     
-    private WireFramePanel wireFramePanel;
+    private final WireFramePanel wireFramePanel;
     
     /**
      * Constructs a new frame that is initially invisible.
