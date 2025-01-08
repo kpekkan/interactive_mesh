@@ -17,28 +17,22 @@ public class WireFrame2D implements WireFrame<Point2D> {
         edgeTable = new ArrayList<>();
     }
     
-    public static WireFrame2D newWireFrame2DFromFile(File vertexFile, File edgeFile) throws FileNotFoundException {
-        WireFrame2D wireFrame2D = new WireFrame2D();
-        BufferedReader vertexReader = new BufferedReader(new FileReader(vertexFile));
-        BufferedReader edgeReader = new BufferedReader(new FileReader(edgeFile));
-        
-        vertexReader.lines().forEachOrdered(string -> {
-            String regex = "[\\s]";
+    public static void newWireFrame2DFromFile(WireFrame2D wireFrame2D, File vertexFile, File edgeFile) throws FileNotFoundException {
+        new BufferedReader(new FileReader(vertexFile)).lines().forEachOrdered(string -> {
+            String regex = "\\s";
             String[] myArray = string.split(regex);
             double x = Double.parseDouble(myArray[0]);
             double y = Double.parseDouble(myArray[1]);
             wireFrame2D.addVertex(new Point2D.Double(x, y));
         });
         
-        edgeReader.lines().forEachOrdered(string -> {
-            String regex = "[\\s]";
+        new BufferedReader(new FileReader(edgeFile)).lines().forEachOrdered(string -> {
+            String regex = "\\s";
             String[] myArray = string.split(regex);
             int x = Integer.parseInt(myArray[0]);
             int y = Integer.parseInt(myArray[1]);
             wireFrame2D.addEdge(x, y);
         });
-        
-        return wireFrame2D;
     }
     
     /**
