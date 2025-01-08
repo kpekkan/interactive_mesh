@@ -23,11 +23,19 @@ public class WireFrame2D implements WireFrame<Point2D> {
         BufferedReader edgeReader = new BufferedReader(new FileReader(edgeFile));
         
         vertexReader.lines().forEachOrdered(string -> {
-            
+            String regex = "[\\s]";
+            String[] myArray = string.split(regex);
+            double x = Double.parseDouble(myArray[0]);
+            double y = Double.parseDouble(myArray[1]);
+            wireFrame2D.addVertex(new Point2D.Double(x, y));
         });
         
         edgeReader.lines().forEachOrdered(string -> {
-            
+            String regex = "[\\s]";
+            String[] myArray = string.split(regex);
+            int x = Integer.parseInt(myArray[0]);
+            int y = Integer.parseInt(myArray[1]);
+            wireFrame2D.addEdge(x, y);
         });
         
         return wireFrame2D;
