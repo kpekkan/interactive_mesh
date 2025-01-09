@@ -1,5 +1,9 @@
 package org.example;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * represents a <a href="https://en.wikipedia.org/wiki/Wire-frame_model">wireframe model</a>.
  *
@@ -11,7 +15,7 @@ public interface WireFrame<E> {
      *
      * @return all the vertexes in this {@link WireFrame}s vertex table
      */
-    E[] getVertexes();
+    Collection<Point2D> getVertexes();
     /**
      * Returns the vertex at the specified vertex index in this {@link WireFrame}s vertex table.
      *
@@ -19,15 +23,13 @@ public interface WireFrame<E> {
      * @return the vertex at the specified vertex index in this {@link WireFrame}s vertex table
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    default E getVertexe(int vertexIndex) {
-        return getVertexes()[vertexIndex];
-    }
+    E getVertexe(int vertexIndex);
     /**
      * gives all the edges of this {@link WireFrame}s edge table as an array of edges.
      *
      * @return all the edges in this {@link WireFrame}s edge table
      */
-    int[][] getEdges();
+    Collection<int[]> getEdges();
     /**
      * Returns the edge at the specified edge index in this {@link WireFrame}s edge table.
      *
@@ -35,9 +37,7 @@ public interface WireFrame<E> {
      * @return the edge at the specified edge index in this {@link WireFrame}s edge table
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    default int[] getEdge(int edgeIndex) {
-        return getEdges()[edgeIndex];
-    }
+    int[] getEdge(int edgeIndex);
     /**
      * Appends the specified vertex to the end of this {@link WireFrame}s vertex table.
      *

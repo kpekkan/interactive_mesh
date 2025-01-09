@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.function.Consumer;
+import java.util.Collection;
 
 public class WireFrame2D implements WireFrame<Point2D> {
     private ArrayList<Point2D> vertexTable;
@@ -41,8 +41,8 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * @return all the vertexes in this {@link WireFrame}s vertex table
      */
     @Override
-    public Point2D[] getVertexes() {
-        return (Point2D[]) vertexTable.toArray();
+    public Collection<Point2D> getVertexes() {
+        return vertexTable;
     }
     
     
@@ -65,8 +65,8 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * @return all the edges in this {@link WireFrame}s edge table
      */
     @Override
-    public int[][] getEdges() {
-        return (int[][]) edgeTable.toArray();
+    public Collection<int[]> getEdges() {
+        return edgeTable;
     }
     
     

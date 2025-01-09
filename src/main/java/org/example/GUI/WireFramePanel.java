@@ -29,18 +29,19 @@ public class WireFramePanel extends JPanel {
         mode = WireFramePanelModes.VIEW_MODE;
         camera = new CameraLocation();
         
-        //View Mode
         addMouseMotionListener(new MouseMotionListener() {
             private Point2D lastPoint;
             @Override
             public void mouseDragged(MouseEvent e) {
                 Point2D currentPoint = e.getPoint();
                 
-                camera.topLeft.setLocation(
-                        camera.topLeft.getX() + lastPoint.getX() - currentPoint.getX(),
-                        camera.topLeft.getY() + lastPoint.getY() - currentPoint.getY()
-                );
-                repaint();
+                if (mode.isViewMode()) {
+                    camera.topLeft.setLocation(
+                            camera.topLeft.getX() + lastPoint.getX() - currentPoint.getX(),
+                            camera.topLeft.getY() + lastPoint.getY() - currentPoint.getY()
+                    );
+                    repaint();
+                }
                 
                 lastPoint = e.getPoint();
             }
@@ -70,15 +71,10 @@ public class WireFramePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
-        Point2D worldPoint = wireFrame.getVertexe(0);
-        int r = 10;
-        g2D.setColor(Color.red);
-        g2D.fillOval((int) worldPoint.getX() - r / 2, (int) worldPoint.getY() - r / 2, r, r);
-        
-        Point2D cameraPoint = camera.convert2CameraCord(worldPoint, this);
-        g2D.setColor(Color.blue);
-        g2D.fillOval((int) cameraPoint.getX() - r / 2, (int) cameraPoint.getY() - r / 2, r, r);
-        System.out.printf("\nWorld cord Point: %s\nCamera cord Point: %s\n", worldPoint, cameraPoint);
+        for (Point2D point: wireFrame.getVertexes()) {
+            point = camera.convert2CameraCord(point, this);
+            g2D.fillOval((int) point.getX(), (int) point.getY(), 10, 10);
+        }
     }
 }
 
