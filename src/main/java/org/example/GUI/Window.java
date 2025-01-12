@@ -2,6 +2,9 @@ package org.example.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class Window extends JFrame {
     
@@ -28,14 +31,23 @@ public class Window extends JFrame {
         
         getContentPane().add(wireFramePanel = new WireFramePanel());
         
+        addWindowListener(new WindowAdapter() {
+            /**
+             * Invoked when a window has been closed.
+             *
+             * @param e
+             */
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // calls export function before closing
+                super.windowClosed(e);
+                wireFramePanel.getWireFrame().export();
+            }
+        });
+        
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-    }
-    
-    
-    public static void main(String[] args) {
-        new Window();
     }
 }
 

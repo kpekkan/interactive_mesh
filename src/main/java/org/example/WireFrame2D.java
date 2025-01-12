@@ -114,12 +114,26 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * indices).
      *
      * @param vertexIndex the vertex index of the vertex to be removed
-     * @return the vertex that was removed from the {@link WireFrame}s vertex table
+     * @return true if the operation was successful
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public Point2D removeVertex(int vertexIndex) {
-        return vertexTable.remove(vertexIndex);
+    public boolean removeVertex(int vertexIndex) {
+        vertexTable.remove(vertexIndex);
+        for (int i = 0; i < edgeTable.size(); i++) {
+            int[] edge = edgeTable.get(i);
+            if (edge[0] == vertexIndex || edge[1] == vertexIndex) {
+                edgeTable.remove(i--);
+            } else {
+                if (edge[0] > vertexIndex) {
+                    edge[0]--;
+                }
+                if (edge[1] > vertexIndex) {
+                    edge[1]--;
+                }
+            }
+        }
+        return true;
     }
     
     
@@ -135,5 +149,14 @@ public class WireFrame2D implements WireFrame<Point2D> {
     @Override
     public int[] removeEdge(int edgeIndex) {
         return edgeTable.remove(edgeIndex);
+    }
+    
+    
+    /**
+     * exports file
+     * @return true on a successful export
+     */
+    public boolean export() {
+        return true;
     }
 }

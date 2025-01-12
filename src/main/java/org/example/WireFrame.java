@@ -1,7 +1,6 @@
 package org.example;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -63,7 +62,7 @@ public interface WireFrame<E> {
      * @return the vertex that was removed from the {@link WireFrame}s vertex table
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    E removeVertex(int vertexIndex);
+    boolean removeVertex(int vertexIndex);
     /**
      * Removes the edge at the specified position in this {@link WireFrame}s edge table.
      * Shifts any subsequent edge to the left (subtracts one from their

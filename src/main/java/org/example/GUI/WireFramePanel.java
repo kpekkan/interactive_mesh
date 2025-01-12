@@ -263,7 +263,12 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyChar()) {
             case 'v' -> {
-                wireFrame.addVertex(camera.camera2WorldCord(e.getComponent().getMousePosition(), this));
+                mode = WireFramePanelModes.VIEW_MODE;
+                if ((objectBeingClicked = findVertexInCameraMode(e.getComponent().getMousePosition())) == -1)
+                    wireFrame.addVertex(camera.camera2WorldCord(e.getComponent().getMousePosition(), this));
+                else {
+                    wireFrame.removeVertex(objectBeingClicked);
+                }
                 repaint();
             }
             case 'e' -> {
@@ -282,6 +287,11 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
                 repaint();
             }
         }
+    }
+    
+    
+    public WireFrame2D getWireFrame() {
+        return wireFrame;
     }
 }
 
