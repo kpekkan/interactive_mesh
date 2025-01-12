@@ -11,13 +11,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-public class WireFramePanel extends JPanel implements MouseMotionListener, MouseListener {
+public class WireFramePanel extends JPanel implements MouseMotionListener, MouseListener, KeyListener {
+    public final int VERTEX_RADIUS = 10;
     public final int INITIAL_WIDTH = 500;
     public final int INITIAL_HEIGHT = 500;
     private final WireFrame2D wireFrame;
-    private ArrayList<Point2D> vertexesInCameraCoordinates;
-    private WireFramePanelModes mode;
+    private final ArrayList<Point2D> vertexesInCameraCoordinates;
     private final CameraLocation camera;
+    private WireFramePanelModes mode;
     private Point2D lastPoint;
     
     /**
@@ -34,14 +35,15 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
         setPreferredSize(new Dimension(INITIAL_WIDTH, INITIAL_HEIGHT));
         wireFrame = new WireFrame2D();
         vertexesInCameraCoordinates = new ArrayList<>();
-        wireFrame.addVertex(new Point2D.Double(250, 250));
-        wireFrame.addVertex(new Point2D.Double(200, 250));
         mode = WireFramePanelModes.VIEW_MODE;
         camera = new CameraLocation();
         objectBeingClicked = -1;
         
         addMouseMotionListener(this);
         addMouseListener(this);
+        
+        setFocusable(true);
+        addKeyListener(this);
     }
     
     
@@ -62,22 +64,43 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
         
+        int halfVertexRadius = VERTEX_RADIUS >> 1;
+        
         vertexesInCameraCoordinates.clear();
         ArrayList<Point2D> vertexes = (ArrayList<Point2D>) wireFrame.getVertexes();
         vertexesInCameraCoordinates.ensureCapacity(vertexes.size());
         
+        // Draw Vertexes
         for (int i = 0; i < vertexes.size(); i++) {
             Point2D cameraCord = camera.world2CameraCord(vertexes.get(i), this);
             vertexesInCameraCoordinates.add(cameraCord);
-            g2D.draw(new Ellipse2D.Double(cameraCord.getX(), cameraCord.getY(), 10, 10));
+            g2D.draw(new Ellipse2D.Double(cameraCord.getX() - halfVertexRadius, cameraCord.getY() - halfVertexRadius, VERTEX_RADIUS, VERTEX_RADIUS));
+        }
+        
+        ArrayList<int[]> edges = (ArrayList<int[]>) wireFrame.getEdges();
+        // Draw Edges
+        for (int i = 0; i < edges.size(); i++) {
+            int[] edge = edges.get(i);
+            Point2D point1 = vertexesInCameraCoordinates.get(edge[0]);
+            Point2D point2 = vertexesInCameraCoordinates.get(edge[1]);
+            g2D.drawLine((int) point1.getX(), (int) point1.getY(), (int) point2.getX(), (int) point2.getY());
         }
         
         //write mode in the top left corner
-        g2D.drawString(mode.toString() + ": " + switch (mode) {
-            case VIEW_MODE -> camera.toString();
-            case EDIT_VERTEX_MODE -> vertexes.get(objectBeingClicked).toString();
-            case EDIT_EDGE_MODE -> "";
-        }, 5, 10);
+        switch (mode) {
+            case VIEW_MODE -> {
+                g2D.drawString(mode + ": " + camera.toString(), 5, 10);
+            }
+            case EDIT_VERTEX_MODE -> {
+                g2D.drawString(mode + ": " + vertexes.get(objectBeingClicked).toString(), 5, 10);
+            }
+            case EDIT_EDGE_MODE -> {
+                Point2D point = vertexesInCameraCoordinates.get(objectBeingClicked);
+                Point2D mouse = getMousePosition();
+                g2D.drawString(mode + ": " + point.toString(), 5, 10);
+                g2D.drawLine((int) point.getX(), (int) point.getY(), (int) mouse.getX(), (int) mouse.getY());
+            }
+        }
     }
     
     
@@ -101,16 +124,29 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
     @Override
     public void mousePressed(MouseEvent e) {
         Point2D currentPoint = e.getPoint();
-        for (int i = 0; i < vertexesInCameraCoordinates.size(); i++)
-            if (currentPoint.distance(vertexesInCameraCoordinates.get(i)) <= 10) {
-                mode = WireFramePanelModes.EDIT_VERTEX_MODE;
-                objectBeingClicked = i;
-                repaint();
-                return;
-            }
+        if ((objectBeingClicked = findVertexInCameraMode(currentPoint)) != -1) {
+            mode = WireFramePanelModes.EDIT_VERTEX_MODE;
+            repaint();
+            return;
+        }
         
-            
         mode = WireFramePanelModes.VIEW_MODE;
+        repaint();
+    }
+    
+    
+    /**
+     * finds the index of the vertex within 10 pixels of the point
+     *
+     * @param point the point you want to find a vertex at
+     * @return the vertexes index inside the vertex table
+     */
+    private int findVertexInCameraMode(Point2D point) {
+        for (int i = 0; i < vertexesInCameraCoordinates.size(); i++)
+            if (point.distance(vertexesInCameraCoordinates.get(i)) <= 10) {
+                return i;
+            }
+        return -1;
     }
     
     
@@ -165,20 +201,14 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
         Point2D currentPoint = e.getPoint();
         switch (mode) {
             case VIEW_MODE -> {
-                camera.topLeft.setLocation(
-                        camera.topLeft.getX() + lastPoint.getX() - currentPoint.getX(),
-                        camera.topLeft.getY() + lastPoint.getY() - currentPoint.getY()
-                );
+                camera.topLeft.setLocation(camera.topLeft.getX() + lastPoint.getX() - currentPoint.getX(), camera.topLeft.getY() + lastPoint.getY() - currentPoint.getY());
                 repaint();
             }
             case EDIT_VERTEX_MODE -> {
-                wireFrame.getVertexe(objectBeingClicked).setLocation(
-                        camera.camera2WorldCord(currentPoint, this)
-                );
+                wireFrame.getVertexe(objectBeingClicked).setLocation(camera.camera2WorldCord(currentPoint, this));
                 repaint();
             }
         }
-        
         
         lastPoint = e.getPoint();
     }
@@ -193,6 +223,65 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
     @Override
     public void mouseMoved(MouseEvent e) {
         lastPoint = e.getPoint();
+        if (mode.isEdgeMode())
+            repaint();
+    }
+    
+    
+    /**
+     * Invoked when a key has been typed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key typed event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+    
+    
+    /**
+     * Invoked when a key has been pressed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key pressed event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+    
+    
+    /**
+     * Invoked when a key has been released.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key released event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyReleased(KeyEvent e) {
+        switch (e.getKeyChar()) {
+            case 'v' -> {
+                wireFrame.addVertex(camera.camera2WorldCord(e.getComponent().getMousePosition(), this));
+                repaint();
+            }
+            case 'e' -> {
+                if (mode.isEdgeMode()) {
+                    int currentPoint = findVertexInCameraMode(e.getComponent().getMousePosition());
+                    if (currentPoint != -1 && currentPoint != objectBeingClicked) 
+                        wireFrame.addEdge(objectBeingClicked, currentPoint);
+                    
+                    mode = WireFramePanelModes.VIEW_MODE;
+                    objectBeingClicked = -1;
+                } else {
+                    objectBeingClicked = findVertexInCameraMode(e.getComponent().getMousePosition());
+                    if (objectBeingClicked != -1)
+                        mode = WireFramePanelModes.EDIT_EDGE_MODE;
+                }
+                repaint();
+            }
+        }
     }
 }
 
@@ -222,25 +311,18 @@ class CameraLocation extends Dimension {
         return new Point2D.Double((worldCord.getX() - topLeft.getX()) * magnifyingConstantX, (worldCord.getY() - topLeft.getY()) * magnifyingConstantY);
     }
     
+    
     public Point2D camera2WorldCord(Point2D cameraCord, JPanel panel) {
         double magnifyingConstantX = panel.getWidth() / this.getWidth();
         double magnifyingConstantY = panel.getHeight() / this.getHeight();
         
-        return new Point2D.Double(
-                cameraCord.getX() / magnifyingConstantX + topLeft.getX(),
-                cameraCord.getY() / magnifyingConstantY + topLeft.getY()
-        );
+        return new Point2D.Double(cameraCord.getX() / magnifyingConstantX + topLeft.getX(), cameraCord.getY() / magnifyingConstantY + topLeft.getY());
     }
     
     
     @Override
     public String toString() {
-        return "CameraLocation{" +
-                "x=" + topLeft.getX() +
-                ", y=" + topLeft.getY() +
-                ", width=" + width +
-                ", height=" + height +
-                '}';
+        return "CameraLocation{" + "x=" + topLeft.getX() + ", y=" + topLeft.getY() + ", width=" + width + ", height=" + height + '}';
     }
 }
 
