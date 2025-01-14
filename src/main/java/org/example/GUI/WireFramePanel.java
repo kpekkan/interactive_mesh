@@ -330,11 +330,11 @@ class CameraLocation extends Dimension {
     }
     
     public void increaseCameraWithBy(int deltaX) {
-        
+        width += deltaX;
     }
     
     public void increaseCameraHeightBy(int deltaY) {
-        
+        height += deltaY;
     }
     
     @Override
