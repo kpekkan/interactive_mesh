@@ -10,9 +10,9 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class WireFramePanel extends JPanel implements MouseMotionListener, MouseListener, KeyListener {
-    public static final int CAMERA_SIZE_INCREASE_UNIT = 20;
     public final int VERTEX_RADIUS = 10;
     public final int INITIAL_WIDTH = 500;
     public final int INITIAL_HEIGHT = 500;
@@ -289,23 +289,29 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
                 }
                 repaint();
             }
+            case 67 /* C */ -> {
+                camera.centerCamera(wireFrame.getVertexes());
+                repaint();
+            }
             case 37 /* ← */ -> {
-                camera.increaseCameraWithBy(-CAMERA_SIZE_INCREASE_UNIT);
+                camera.increaseCameraWithBy(-CameraLocation.CAMERA_SIZE_INCREASE_UNIT);
                 repaint();
             }
             case 38 /* ↑ */ -> {
-                camera.increaseCameraHeightBy(CAMERA_SIZE_INCREASE_UNIT);
+                camera.increaseCameraHeightBy(CameraLocation.CAMERA_SIZE_INCREASE_UNIT);
                 repaint();
             }
             case 39 /* → */ -> {
-                camera.increaseCameraWithBy(CAMERA_SIZE_INCREASE_UNIT);
+                camera.increaseCameraWithBy(CameraLocation.CAMERA_SIZE_INCREASE_UNIT);
                 repaint();
             }
             case 40 /* ↓ */ -> {
-                camera.increaseCameraHeightBy(-CAMERA_SIZE_INCREASE_UNIT);
+                camera.increaseCameraHeightBy(-CameraLocation.CAMERA_SIZE_INCREASE_UNIT);
                 repaint();
             }
         }
+        
+//        System.out.println(KeyEvent.getKeyText(e.getExtendedKeyCode()) + ": " + e.getExtendedKeyCode());
     }
     
     
@@ -315,6 +321,9 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
 }
 
 class CameraLocation extends Dimension {
+    public static final int CAMERA_SIZE_INCREASE_UNIT = 20;
+    public static final int INITIAL_CAMERA_WIDTH = 300;
+    public static final int INITIAL_CAMERA_HEIGHT = 300;
     Point2D topLeft;
     
     
@@ -323,13 +332,17 @@ class CameraLocation extends Dimension {
      * of zero and a height of zero.
      */
     public CameraLocation() {
-        super(300, 300);
+        super(INITIAL_CAMERA_WIDTH, INITIAL_CAMERA_HEIGHT);
         topLeft = new Point(0, 0);
     }
     
     
     public Point2D getCenter() {
         return new Point2D.Double(topLeft.getX() + getWidth() / 2, topLeft.getY() + getHeight() / 2);
+    }
+    
+    public void setCenter(Point2D center) {
+        topLeft.setLocation(center.getX() - getWidth() / 2, center.getY() - getHeight() / 2);
     }
     
     
@@ -350,14 +363,50 @@ class CameraLocation extends Dimension {
     
     
     public void increaseCameraWithBy(int deltaX) {
+        Point2D center = getCenter();
         width += deltaX;
+        setCenter(center);
     }
     
     
     public void increaseCameraHeightBy(int deltaY) {
+        Point2D center = getCenter();
         height += deltaY;
+        setCenter(center);
     }
     
+    public void centerCamera(ArrayList<Point2D> vertexes) {
+        if (vertexes.isEmpty()) {
+            topLeft.setLocation(0, 0);
+            height = INITIAL_CAMERA_HEIGHT;
+            width = INITIAL_CAMERA_WIDTH;
+            return;
+        }
+        
+        double top = vertexes.getFirst().getY();
+        double bottom = top;
+        double left = vertexes.getFirst().getX();
+        double right = left;
+        
+        for (int i = 1; i < vertexes.size(); i++) {
+            Point2D point = vertexes.get(i);
+            
+            if (point.getX() < left)
+                left = point.getX();
+            else if (point.getX() > right)
+                right = point.getX();
+            
+            if (point.getY() > top)
+                top = point.getY();
+            else if (point.getY() < bottom)
+                bottom = point.getY();
+        }
+        
+        height = INITIAL_CAMERA_HEIGHT + CAMERA_SIZE_INCREASE_UNIT * ((int) ((top - bottom - INITIAL_CAMERA_HEIGHT) / CAMERA_SIZE_INCREASE_UNIT) + 1);
+        width = INITIAL_CAMERA_WIDTH + CAMERA_SIZE_INCREASE_UNIT * ((int) ((right - left - INITIAL_CAMERA_WIDTH) / CAMERA_SIZE_INCREASE_UNIT) + 1);
+        
+        setCenter(new Point2D.Double((left + right) / 2, (top + bottom) / 2));
+    }
     
     @Override
     public String toString() {

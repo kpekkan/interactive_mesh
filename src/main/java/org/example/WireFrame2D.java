@@ -41,7 +41,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * @return all the vertexes in this {@link WireFrame}s vertex table
      */
     @Override
-    public Collection<Point2D> getVertexes() {
+    public ArrayList<Point2D> getVertexes() {
         return vertexTable;
     }
     
