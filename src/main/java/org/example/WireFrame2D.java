@@ -1,21 +1,20 @@
 package org.example;
 
 import java.awt.geom.Point2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class WireFrame2D implements WireFrame<Point2D> {
-    private ArrayList<Point2D> vertexTable;
-    private ArrayList<int[]> edgeTable;
+    private final ArrayList<Point2D> vertexTable;
+    private final ArrayList<int[]> edgeTable;
+    
     
     public WireFrame2D() {
         vertexTable = new ArrayList<>();
         edgeTable = new ArrayList<>();
     }
+    
     
     public static void newWireFrame2DFromFile(WireFrame2D wireFrame2D, File vertexFile, File edgeFile) throws FileNotFoundException {
         new BufferedReader(new FileReader(vertexFile)).lines().forEachOrdered(string -> {
@@ -34,6 +33,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
             wireFrame2D.addEdge(x, y);
         });
     }
+    
     
     /**
      * gives all the Vertexes of this {@link WireFrame}s vertex table as an array of vertexes.
@@ -154,9 +154,8 @@ public class WireFrame2D implements WireFrame<Point2D> {
     
     /**
      * exports file
+     *
      * @return true on a successful export
      */
-    public boolean export() {
-        return true;
-    }
+    public boolean export() throws IOException {return true;}
 }

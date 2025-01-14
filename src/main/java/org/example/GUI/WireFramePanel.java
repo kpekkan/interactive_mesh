@@ -274,7 +274,7 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
             case 'e' -> {
                 if (mode.isEdgeMode()) {
                     int currentPoint = findVertexInCameraMode(e.getComponent().getMousePosition());
-                    if (currentPoint != -1 && currentPoint != objectBeingClicked) 
+                    if (currentPoint != -1 && currentPoint != objectBeingClicked)
                         wireFrame.addEdge(objectBeingClicked, currentPoint);
                     
                     mode = WireFramePanelModes.VIEW_MODE;
