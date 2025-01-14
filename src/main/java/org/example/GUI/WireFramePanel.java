@@ -199,14 +199,15 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        Point2D currentPoint = e.getPoint();
+        Point2D currentPoint = camera.camera2WorldCord(e.getPoint(), this);
         switch (mode) {
             case VIEW_MODE -> {
-                camera.topLeft.setLocation(camera.topLeft.getX() + lastPoint.getX() - currentPoint.getX(), camera.topLeft.getY() + lastPoint.getY() - currentPoint.getY());
+                Point2D lastPointWorld = camera.camera2WorldCord(lastPoint, this);
+                camera.topLeft.setLocation(camera.topLeft.getX() + lastPointWorld.getX() - currentPoint.getX(), camera.topLeft.getY() + lastPointWorld.getY() - currentPoint.getY());
                 repaint();
             }
             case EDIT_VERTEX_MODE -> {
-                wireFrame.getVertexe(objectBeingClicked).setLocation(camera.camera2WorldCord(currentPoint, this));
+                wireFrame.getVertexe(objectBeingClicked).setLocation(currentPoint);
                 repaint();
             }
         }
@@ -262,8 +263,6 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
      */
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyChar()) {
-            case 'v' -> {
         switch (e.getExtendedKeyCode()) {
             
             case 86 /* V */ -> {
@@ -275,7 +274,6 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
                 }
                 repaint();
             }
-            case 'e' -> {
             case 69 /* E */ -> {
                 if (mode.isEdgeMode()) {
                     int currentPoint = findVertexInCameraMode(e.getComponent().getMousePosition());
