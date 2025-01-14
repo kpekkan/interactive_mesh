@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class WireFramePanel extends JPanel implements MouseMotionListener, MouseListener, KeyListener {
+    public static final int CAMERA_SIZE_INCREASE_UNIT = 20;
     public final int VERTEX_RADIUS = 10;
     public final int INITIAL_WIDTH = 500;
     public final int INITIAL_HEIGHT = 500;
@@ -263,6 +264,9 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyChar()) {
             case 'v' -> {
+        switch (e.getExtendedKeyCode()) {
+            
+            case 86 /* V */ -> {
                 mode = WireFramePanelModes.VIEW_MODE;
                 if ((objectBeingClicked = findVertexInCameraMode(e.getComponent().getMousePosition())) == -1)
                     wireFrame.addVertex(camera.camera2WorldCord(e.getComponent().getMousePosition(), this));
@@ -272,6 +276,7 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
                 repaint();
             }
             case 'e' -> {
+            case 69 /* E */ -> {
                 if (mode.isEdgeMode()) {
                     int currentPoint = findVertexInCameraMode(e.getComponent().getMousePosition());
                     if (currentPoint != -1 && currentPoint != objectBeingClicked)
@@ -284,6 +289,22 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
                     if (objectBeingClicked != -1)
                         mode = WireFramePanelModes.EDIT_EDGE_MODE;
                 }
+                repaint();
+            }
+            case 37 /* ← */ -> {
+                camera.increaseCameraWithBy(-CAMERA_SIZE_INCREASE_UNIT);
+                repaint();
+            }
+            case 38 /* ↑ */ -> {
+                camera.increaseCameraHeightBy(CAMERA_SIZE_INCREASE_UNIT);
+                repaint();
+            }
+            case 39 /* → */ -> {
+                camera.increaseCameraWithBy(CAMERA_SIZE_INCREASE_UNIT);
+                repaint();
+            }
+            case 40 /* ↓ */ -> {
+                camera.increaseCameraHeightBy(-CAMERA_SIZE_INCREASE_UNIT);
                 repaint();
             }
         }
@@ -329,13 +350,16 @@ class CameraLocation extends Dimension {
         return new Point2D.Double(cameraCord.getX() / magnifyingConstantX + topLeft.getX(), cameraCord.getY() / magnifyingConstantY + topLeft.getY());
     }
     
+    
     public void increaseCameraWithBy(int deltaX) {
         width += deltaX;
     }
     
+    
     public void increaseCameraHeightBy(int deltaY) {
         height += deltaY;
     }
+    
     
     @Override
     public String toString() {
