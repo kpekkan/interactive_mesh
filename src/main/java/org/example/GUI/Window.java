@@ -4,11 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.io.IOException;
 
 public class Window extends JFrame {
     
     private final WireFramePanel wireFramePanel;
+    
     
     /**
      * Constructs a new frame that is initially invisible.
@@ -41,7 +42,11 @@ public class Window extends JFrame {
             public void windowClosing(WindowEvent e) {
                 // calls export function before closing
                 super.windowClosed(e);
-                wireFramePanel.getWireFrame().export();
+                try {
+                    wireFramePanel.getWireFrame().export();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
         

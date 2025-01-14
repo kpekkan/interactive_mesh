@@ -274,7 +274,7 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
             case 'e' -> {
                 if (mode.isEdgeMode()) {
                     int currentPoint = findVertexInCameraMode(e.getComponent().getMousePosition());
-                    if (currentPoint != -1 && currentPoint != objectBeingClicked) 
+                    if (currentPoint != -1 && currentPoint != objectBeingClicked)
                         wireFrame.addEdge(objectBeingClicked, currentPoint);
                     
                     mode = WireFramePanelModes.VIEW_MODE;
@@ -329,6 +329,13 @@ class CameraLocation extends Dimension {
         return new Point2D.Double(cameraCord.getX() / magnifyingConstantX + topLeft.getX(), cameraCord.getY() / magnifyingConstantY + topLeft.getY());
     }
     
+    public void increaseCameraWithBy(int deltaX) {
+        
+    }
+    
+    public void increaseCameraHeightBy(int deltaY) {
+        
+    }
     
     @Override
     public String toString() {
