@@ -123,7 +123,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
         for (int i = 0; i < edgeTable.size(); i++) {
             int[] edge = edgeTable.get(i);
             if (edge[0] == vertexIndex || edge[1] == vertexIndex) {
-                edgeTable.remove(i--);
+                removeEdge(i--);
             } else {
                 if (edge[0] > vertexIndex) {
                     edge[0]--;
@@ -157,5 +157,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
      *
      * @return true on a successful export
      */
-    public boolean export() throws IOException {return true;}
+    public boolean export() throws IOException {
+        return true;
+    }
 }
