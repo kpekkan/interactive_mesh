@@ -310,7 +310,7 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
 }
 
 class CameraLocation extends Dimension {
-    public static final int CAMERA_SIZE_INCREASE_UNIT = 20;
+    public static final int CAMERA_SIZE_INCREASE_UNIT = 10;
     public static final int INITIAL_CAMERA_WIDTH = 300;
     public static final int INITIAL_CAMERA_HEIGHT = 300;
     Point2D topLeft;
