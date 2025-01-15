@@ -158,6 +158,35 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * @return true on a successful export
      */
     public boolean export() throws IOException {
+        BufferedWriter text1 = new BufferedWriter(new FileWriter("noktalar.txt"));
+        text1.write("[\n");
+        for (int i = 0; i < vertexTable.size(); i++) {
+            double Xcoordinate = vertexTable.get(i).getX();
+            double Ycoordinate = vertexTable.get(i).getY();
+            text1.write(Double.toString(Xcoordinate));
+            text1.write(" ");
+            text1.write(Double.toString(Ycoordinate));
+            text1.write("; ");
+            if (i % 8 == 7)
+                text1.write("\n");
+        }
+        text1.write("\n];");
+        text1.close();
+
+        BufferedWriter text2 = new BufferedWriter(new FileWriter("kenar.txt"));
+        text2.write("[\n");
+        for (int i = 0; i < edgeTable.size(); i++) {
+            int Node1 = edgeTable.get(i)[0];
+            int Node2 = edgeTable.get(i)[1];
+            text2.write(Integer.toString(Node1));
+            text2.write(" ");
+            text2.write(Integer.toString(Node2));
+            text2.write("; ");
+            if (i % 8 == 7)
+                text2.write("\n");
+        }
+        text2.write("\n];");
+        text2.close();
         return true;
     }
 }
