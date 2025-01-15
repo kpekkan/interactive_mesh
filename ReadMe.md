@@ -10,3 +10,4 @@ mvn exec:java
 | V        | add a vertex                      |
 | E        | add a edge                        |
 | C        | center the camera at the vertexes |
+| arrow    | edit camera size                  |
