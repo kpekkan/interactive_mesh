@@ -41,12 +41,12 @@ public class Window extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 // calls export function before closing
-                super.windowClosed(e);
                 try {
                     wireFramePanel.getWireFrame().export();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
+                super.windowClosed(e);
             }
         });
         
