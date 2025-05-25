@@ -10,6 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class WireFramePanel extends JPanel implements MouseMotionListener, MouseListener, KeyListener {
@@ -48,7 +49,7 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
     }
     
     
-    public WireFramePanel(File vertexFile, File edgeFile) throws FileNotFoundException {
+    public WireFramePanel(File vertexFile, File edgeFile) throws IOException {
         this();
         
         WireFrame2D.newWireFrame2DFromFile(wireFrame, vertexFile, edgeFile);

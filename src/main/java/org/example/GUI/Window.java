@@ -1,9 +1,12 @@
 package org.example.GUI;
 
+import org.example.WireFrame2D;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 
 public class Window extends JFrame {
@@ -53,6 +56,16 @@ public class Window extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    public Window(File file, File file1) {
+        this();
+        try {
+            WireFrame2D.newWireFrame2DFromFile(wireFramePanel.getWireFrame(), file, file1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        repaint();
     }
 }
 

@@ -14,27 +14,55 @@ public class WireFrame2D implements WireFrame<Point2D> {
         vertexTable = new ArrayList<>();
         edgeTable = new ArrayList<>();
     }
-    
-    
-    public static void newWireFrame2DFromFile(WireFrame2D wireFrame2D, File vertexFile, File edgeFile) throws FileNotFoundException {
-        new BufferedReader(new FileReader(vertexFile)).lines().forEachOrdered(string -> {
-            String regex = "\\s";
-            String[] myArray = string.split(regex);
-            double x = Double.parseDouble(myArray[0]);
-            double y = Double.parseDouble(myArray[1]);
-            wireFrame2D.addVertex(new Point2D.Double(x, y));
-        });
-        
-        new BufferedReader(new FileReader(edgeFile)).lines().forEachOrdered(string -> {
-            String regex = "\\s";
-            String[] myArray = string.split(regex);
-            int x = Integer.parseInt(myArray[0]);
-            int y = Integer.parseInt(myArray[1]);
-            wireFrame2D.addEdge(x, y);
-        });
+
+
+    public static void newWireFrame2DFromFile(WireFrame2D wireFrame2D, File vertexFile, File edgeFile) throws IOException {
+
+        // Read vertices from exported file
+        try (BufferedReader vertexReader = new BufferedReader(new FileReader(vertexFile))) {
+            String line;
+            while ((line = vertexReader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("[") || line.startsWith("];")) continue;
+                String[] points = line.split(";\\s*");
+                for (String point : points) {
+                    point = point.trim();
+                    if (!point.isEmpty()) {
+                        String[] coords = point.split("\\s+");
+                        if (coords.length == 2) {
+                            double x = Double.parseDouble(coords[0]);
+                            double y = Double.parseDouble(coords[1]);
+                            wireFrame2D.addVertex(new Point2D.Double(x, y));
+                        }
+                    }
+                }
+            }
+        }
+
+        // Read edges from exported file
+        try (BufferedReader edgeReader = new BufferedReader(new FileReader(edgeFile))) {
+            String line;
+            while ((line = edgeReader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("[") || line.startsWith("];")) continue;
+                String[] edges = line.split(";\\s*");
+                for (String edge : edges) {
+                    edge = edge.trim();
+                    if (!edge.isEmpty()) {
+                        String[] nodes = edge.split("\\s+");
+                        if (nodes.length == 2) {
+                            int vertexIndex1 = Integer.parseInt(nodes[0]);
+                            int vertexIndex2 = Integer.parseInt(nodes[1]);
+                            wireFrame2D.addEdge(vertexIndex1, vertexIndex2);
+                        }
+                    }
+                }
+            }
+        }
     }
-    
-    
+
+
+
     /**
      * gives all the Vertexes of this {@link WireFrame}s vertex table as an array of vertexes.
      *
