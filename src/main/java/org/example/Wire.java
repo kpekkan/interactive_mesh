@@ -8,7 +8,7 @@ public class Wire {
     private int edge2;
 
 
-    enum WireType {
+    public enum WireType {
         NORMAL(Color.BLUE),
         MUSCLE(Color.RED);
         public final Color color;
@@ -18,9 +18,18 @@ public class Wire {
         }
     }
 
+    public WireType getWireType() {
+        return wireType;
+    }
+
+    public void setWireType(WireType wireType) {
+        this.wireType = wireType;
+    }
+
     public Wire(int edge1, int edge2) {
         this.edge1 = edge1;
         this.edge2 = edge2;
+        wireType = WireType.NORMAL;
     }
 
     public Wire(WireType wireType, int edge1, int edge2) {

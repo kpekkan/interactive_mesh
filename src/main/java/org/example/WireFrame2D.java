@@ -134,7 +134,10 @@ public class WireFrame2D implements WireFrame<Point2D> {
     public void addEdge(int vertex1Index, int vertex2Index) {
         edgeTable.add(new Wire(vertex1Index, vertex2Index));
     }
-    
+    @Override
+    public void addEdge(Wire.WireType wireType, int vertex1Index, int vertex2Index) {
+        edgeTable.add(new Wire(wireType, vertex1Index, vertex2Index));
+    }
     
     /**
      * Removes the vertex at the specified position in this {@link WireFrame}s vertex table.

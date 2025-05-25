@@ -53,6 +53,7 @@ public interface WireFrame<E> {
      *                     which will be appended to this {@link WireFrame}s edge table
      */
     void addEdge(int vertex1Index, int vertex2Index);
+    void addEdge(Wire.WireType wireType, int vertex1Index, int vertex2Index);
     /**
      * Removes the vertex at the specified position in this {@link WireFrame}s vertex table.
      * Shifts any subsequent vertexes to the left (subtracts one from their

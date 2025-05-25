@@ -73,20 +73,20 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
             vertexesInCameraCoordinates.add(cameraCord);
             g2D.draw(new Ellipse2D.Double(cameraCord.getX() - halfVertexRadius, cameraCord.getY() - halfVertexRadius, VERTEX_RADIUS, VERTEX_RADIUS));
         }
-        
         ArrayList<Wire> edges = (ArrayList<Wire>) wireFrame.getEdges();
         // Draw Edges
         for (Wire edge : edges) {
             Point2D point1 = vertexesInCameraCoordinates.get(edge.getEdge1());
             Point2D point2 = vertexesInCameraCoordinates.get(edge.getEdge2());
+            g2D.setColor(edge.getWireType().color);
             g2D.drawLine((int) point1.getX(), (int) point1.getY(), (int) point2.getX(), (int) point2.getY());
         }
-        
+        g2D.setColor(Color.BLACK);
         //write mode in the top left corner
         switch (mode) {
             case VIEW_MODE -> g2D.drawString(mode + ": " + camera.toString(), 5, 10);
             case EDIT_VERTEX_MODE -> g2D.drawString(mode + ": " + vertexes.get(objectBeingClicked).toString(), 5, 10);
-            case EDIT_EDGE_MODE -> {
+            case EDIT_EDGE_MODE, EDIT_RED_EDGE_MODE -> {
                 Point2D point = vertexesInCameraCoordinates.get(objectBeingClicked);
                 Point2D mouse = getMousePosition();
                 g2D.drawString(mode + ": " + point.toString(), 5, 10);
@@ -216,7 +216,7 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
     @Override
     public void mouseMoved(MouseEvent e) {
         lastPoint = e.getPoint();
-        if (mode.isEdgeMode())
+        if (mode.isEdgeMode() || mode.isRedEdgeMode())
             repaint();
     }
     
@@ -265,6 +265,21 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
                 }
                 repaint();
             }
+            case 82 /* R */ -> {
+                if (mode.isRedEdgeMode()) {
+                    int currentPoint = findVertexInCameraMode(e.getComponent().getMousePosition());
+                    if (currentPoint != -1 && currentPoint != objectBeingClicked)
+                        wireFrame.addEdge(Wire.WireType.MUSCLE, objectBeingClicked, currentPoint);
+
+                    mode = WireFramePanelModes.VIEW_MODE;
+                    objectBeingClicked = -1;
+                } else {
+                    objectBeingClicked = findVertexInCameraMode(e.getComponent().getMousePosition());
+                    if (objectBeingClicked != -1)
+                        mode = WireFramePanelModes.EDIT_RED_EDGE_MODE;
+                }
+                repaint();
+            }
             case 69 /* E */ -> {
                 if (mode.isEdgeMode()) {
                     int currentPoint = findVertexInCameraMode(e.getComponent().getMousePosition());
@@ -302,7 +317,7 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
             }
         }
         
-        //        System.out.println(KeyEvent.getKeyText(e.getExtendedKeyCode()) + ": " + e.getExtendedKeyCode());
+                System.out.println(KeyEvent.getKeyText(e.getExtendedKeyCode()) + ": " + e.getExtendedKeyCode());
     }
     
     
