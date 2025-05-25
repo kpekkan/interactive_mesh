@@ -39,3 +39,5 @@ build/
 .DS_Store
 /kenar.txt
 /noktalar.txt
+muscle.txt
+.idea/misc.xml

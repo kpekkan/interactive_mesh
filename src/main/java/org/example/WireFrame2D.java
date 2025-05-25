@@ -218,6 +218,19 @@ public class WireFrame2D implements WireFrame<Point2D> {
         }
         text2.write("\n];");
         text2.close();
+
+        BufferedWriter text3 = new BufferedWriter(new FileWriter("muscle.txt"));
+        text3.write("[\n");
+        for (int i = 0; i < edgeTable.size(); i++) {
+            if (edgeTable.get(i).getWireType() == Wire.WireType.MUSCLE) {
+                text3.write(" ");
+                if (i % 8 == 7)
+                    text3.write("\n");
+            }
+        }
+        text3.write("\n];");
+        text3.close();
+
         return true;
     }
 }
