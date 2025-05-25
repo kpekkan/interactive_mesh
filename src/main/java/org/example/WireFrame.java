@@ -28,7 +28,7 @@ public interface WireFrame<E> {
      *
      * @return all the edges in this {@link WireFrame}s edge table
      */
-    Collection<int[]> getEdges();
+    Collection<Wire> getEdges();
     /**
      * Returns the edge at the specified edge index in this {@link WireFrame}s edge table.
      *
@@ -36,7 +36,7 @@ public interface WireFrame<E> {
      * @return the edge at the specified edge index in this {@link WireFrame}s edge table
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    int[] getEdge(int edgeIndex);
+    Wire getEdge(int edgeIndex);
     /**
      * Appends the specified vertex to the end of this {@link WireFrame}s vertex table.
      *
@@ -72,5 +72,5 @@ public interface WireFrame<E> {
      * @return the edge that was removed from the {@link WireFrame}s edge table
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    int[] removeEdge(int edgeIndex);
+    Wire removeEdge(int edgeIndex);
 }

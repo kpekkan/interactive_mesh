@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public class WireFrame2D implements WireFrame<Point2D> {
     private final ArrayList<Point2D> vertexTable;
-    private final ArrayList<int[]> edgeTable;
+    private final ArrayList<Wire> edgeTable;
     
     
     public WireFrame2D() {
@@ -65,7 +65,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * @return all the edges in this {@link WireFrame}s edge table
      */
     @Override
-    public Collection<int[]> getEdges() {
+    public Collection<Wire> getEdges() {
         return edgeTable;
     }
     
@@ -78,7 +78,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public int[] getEdge(int edgeIndex) {
+    public Wire getEdge(int edgeIndex) {
         return edgeTable.get(edgeIndex);
     }
     
@@ -104,7 +104,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
      */
     @Override
     public void addEdge(int vertex1Index, int vertex2Index) {
-        edgeTable.add(new int[]{vertex1Index, vertex2Index});
+        edgeTable.add(new Wire(vertex1Index, vertex2Index));
     }
     
     
@@ -121,15 +121,15 @@ public class WireFrame2D implements WireFrame<Point2D> {
     public boolean removeVertex(int vertexIndex) {
         vertexTable.remove(vertexIndex);
         for (int i = 0; i < edgeTable.size(); i++) {
-            int[] edge = edgeTable.get(i);
-            if (edge[0] == vertexIndex || edge[1] == vertexIndex) {
+            Wire edge = edgeTable.get(i);
+            if (edge.getEdge1() == vertexIndex || edge.getEdge2() == vertexIndex) {
                 removeEdge(i--);
             } else {
-                if (edge[0] > vertexIndex) {
-                    edge[0]--;
+                if (edge.getEdge1() > vertexIndex) {
+                    edge.setEdge1(edge.getEdge1() - 1);
                 }
-                if (edge[1] > vertexIndex) {
-                    edge[1]--;
+                if (edge.getEdge2() > vertexIndex) {
+                    edge.setEdge2(edge.getEdge2() - 1);
                 }
             }
         }
@@ -147,7 +147,7 @@ public class WireFrame2D implements WireFrame<Point2D> {
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public int[] removeEdge(int edgeIndex) {
+    public Wire removeEdge(int edgeIndex) {
         return edgeTable.remove(edgeIndex);
     }
     
@@ -176,8 +176,8 @@ public class WireFrame2D implements WireFrame<Point2D> {
         BufferedWriter text2 = new BufferedWriter(new FileWriter("kenar.txt"));
         text2.write("[\n");
         for (int i = 0; i < edgeTable.size(); i++) {
-            int Node1 = edgeTable.get(i)[0];
-            int Node2 = edgeTable.get(i)[1];
+            int Node1 = edgeTable.get(i).getEdge1();
+            int Node2 = edgeTable.get(i).getEdge2();
             text2.write(Integer.toString(Node1));
             text2.write(" ");
             text2.write(Integer.toString(Node2));

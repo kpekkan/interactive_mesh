@@ -1,5 +1,6 @@
 package org.example.GUI;
 
+import org.example.Wire;
 import org.example.WireFrame2D;
 
 import javax.swing.*;
@@ -72,11 +73,11 @@ public class WireFramePanel extends JPanel implements MouseMotionListener, Mouse
             g2D.draw(new Ellipse2D.Double(cameraCord.getX() - halfVertexRadius, cameraCord.getY() - halfVertexRadius, VERTEX_RADIUS, VERTEX_RADIUS));
         }
         
-        ArrayList<int[]> edges = (ArrayList<int[]>) wireFrame.getEdges();
+        ArrayList<Wire> edges = (ArrayList<Wire>) wireFrame.getEdges();
         // Draw Edges
-        for (int[] edge : edges) {
-            Point2D point1 = vertexesInCameraCoordinates.get(edge[0]);
-            Point2D point2 = vertexesInCameraCoordinates.get(edge[1]);
+        for (Wire edge : edges) {
+            Point2D point1 = vertexesInCameraCoordinates.get(edge.getEdge1());
+            Point2D point2 = vertexesInCameraCoordinates.get(edge.getEdge2());
             g2D.drawLine((int) point1.getX(), (int) point1.getY(), (int) point2.getX(), (int) point2.getY());
         }
         
